@@ -49,7 +49,7 @@ Module modMain
 					intModValue = CInt(Math.Ceiling(oReader.Header.SpectraCount / 10))
 
 					For intSpectrumIndex As Integer = 0 To oReader.Header.SpectraCount - 1
-						Dim oSpectrum As ChemstationMSFileReader.clsChemstationDataMSFileReader.clsSpectralRecord = Nothing
+						Dim oSpectrum As ChemstationMSFileReader.clsSpectralRecord = Nothing
 
 						oReader.GetSpectrum(intSpectrumIndex, oSpectrum)
 
