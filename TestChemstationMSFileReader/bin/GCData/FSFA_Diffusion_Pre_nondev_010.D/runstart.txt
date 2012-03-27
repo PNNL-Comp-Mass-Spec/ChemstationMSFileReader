@@ -1,0 +1,55 @@
+ Critical RunStart CP Variables
+ 
+CP Variable  = Value
+
+  Front Injector Available(_locfrontavail) = 1
+   Rear Injector Available(_locRearavail) = 0
+   Dual Injector Available(_Dualavail) = 0
+ 
+ Injection Source(_injsource) = 1  1,2,3,4,5=ALS,Man,Valve,Ext.,PAL
+            _injloc (_injloc) = 1  1,2,3=Front,Rear,Dual
+         MSD Sample(_msinlet) = 1  1,2=sample1=Front,sample2=Rear
+ 
+  _Overlapped _overlap  _ALSNEXT, _ALSNEXT2, _Lastlap  0 0 9 9 0
+
+_overlapped: Is method currently overlapping?  0
+_overlap:    Is hw capable of overlapping?     0
+_alsnext:              Next vial front inlet?  9
+_lastlap:   Indicator for last entry in SLT   0
+
+Front Sample
+ 
+     Alsbottle (_alsbottle) = 1
+      Methfile (_methfile$) = STANDARD_FFAP.M
+      Datafile(,_datafile$) = Blank10.D
+   Sample Name (_dataname$) = Sample31
+  Exp. Barcode(_expbarcode$)= 
+ Miscellaneous (_miscinfo$) = 
+ Vol. Override    (_injvol) = 0
+ Method Volume   (_methvol) = 1
+ SyringeVolume    (_syrvol) = 10
+ SyringeVolLow (_syrvollow) = 0
+    Multiplier  (_multiplr) = 1
+    Sample Amt   (_sampamt) = 0
+ 
+ 
+Rear Sample
+ 
+     Alsbottle(_alsbottle2) = 0
+      Datafile(_datafile2$) = Blank10.D
+   Sample Name(_dataname2$) = Sample31
+  Exp. Barcode(_expbarcode2$) = 
+ Miscellaneous(_miscinfo2$) = 
+ Vol. Override(_injvol2) = 0
+ Method Volume(_methvol2) = 0
+ SyringeVolume(_syrvol2) = 0
+ SyringeVolLow(_syrvollow2) = 0
+    Multiplier(_multiplr2) = 1
+    Sample Amt(_sampamt2) = 0
+
+      _maxvial[ 1 ] =  100
+      _maxvial[ 2 ] =  0
+      _maxvial[ 3 ] =  0
+
+
+Thu Sep 22 08:54:34 2011

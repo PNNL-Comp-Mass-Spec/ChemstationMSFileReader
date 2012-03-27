@@ -1,0 +1,179 @@
+
+
+                    INSTRUMENT CONTROL PARAMETERS:    GCMSD_1
+                    -----------------------------------------
+
+   C:\MSDCHEM\1\METHODS\HELIUM_3ML.M
+      Fri Nov 11 09:49:32 2011
+
+Control Information
+------- -----------
+
+Sample Inlet      :  GC
+Injection Source  :  GC ALS
+Mass Spectrometer :  Enabled
+
+Oven
+Equilibration Time                           1 min
+Oven Program                                 On
+    60 蚓 for 2 min
+    then 5 蚓/min to 70 蚓 for 6 min
+Run Time                                     10 min
+0.5 min (Post Run)                           60 蚓
+
+
+
+
+
+Front Injector
+Syringe Size                                 10 無
+Injection Volume                             1 無
+Injection Repetitions                        1
+Injection Delay                              0 sec
+Solvent A Washes (PreInj)                    1
+Solvent A Washes (PostInj)                   2
+Solvent A Volume                             5 無
+Solvent B Washes (PreInj)                    1
+Solvent B Washes (PostInj)                   2
+Solvent B Volume                             5 無
+Sample Washes                                1
+Sample Wash Volume                           5 無
+Sample Pumps                                 1
+Dwell Time (PreInj)                          0 min
+Dwell Time (PostInj)                         0 min
+Solvent Wash Draw Speed                      300 無/min
+Solvent Wash Dispense Speed                  6000 無/min
+Sample Wash Draw Speed                       300 無/min
+Sample Wash Dispense Speed                   6000 無/min
+Injection Dispense Speed                     6000 無/min
+Viscosity Delay                              0 sec
+Sample Depth                                 Disabled
+
+
+Sample Overlap
+Sample overlap is not enabled
+
+
+
+Front SS Inlet He
+Mode                                         Splitless
+Heater                                       On    250 蚓
+Pressure                                     On    27.336 psi
+Total Flow                                   On    7 mL/min
+Septum Purge Flow                            On    2 mL/min
+Gas Saver                                    On    20 mL/min After 3 min
+Purge Flow to Split Vent                     2 mL/min at 1.5 min
+
+
+Thermal Aux 2 {MSD Transfer Line}
+Heater                                       On
+Temperature Program                          On
+    280 蚓 for 0 min
+Run Time                                     10 min
+
+
+Column #1
+HP-5MS  5% Phenyl Methyl SiloxHP-5MS  5% Phenyl Methyl Silox
+325 蚓: 30 m x 250 痠 x 0.25 痠
+In: Front SS Inlet He
+Out: Other
+
+(Initial)                                    60 蚓
+Pressure                                     27.336 psi
+Flow                                         3 mL/min
+Average Velocity                             54.953 cm/sec
+Holdup Time                                  0.90987 min
+Flow Program                                 On
+    3 mL/min for 1.5 min
+Run Time                                     10 min
+0.5 min (Post Run)                           0.21431 mL/min
+
+
+
+
+
+
+
+
+
+
+
+
+
+Signals
+ Test Plot                                   Save Off
+                                             50 Hz
+ Test Plot                                   Save Off
+                                             50 Hz
+ Test Plot                                   Save Off
+                                             50 Hz
+ Test Plot                                   Save Off
+                                             50 Hz
+
+
+                                MS ACQUISITION PARAMETERS
+
+
+General Information
+------- -----------
+
+Tune File                : lomass_Helium.U
+Acquistion Mode          : Scan
+
+
+MS Information
+-- -----------
+
+Solvent Delay            : 0.00 min
+
+EMV Mode                 : Gain Factor
+Gain Factor              : 1.00
+Resulting EM Voltage     : 1482
+
+[Scan Parameters]
+
+Low Mass                 : 2.0
+High Mass                : 50.0
+Threshold                : 10
+Sample #                 : 1       A/D Samples    2
+Plot 2 low mass          : 2.0
+Plot 2 high mass         : 32.0
+
+[MSZones]
+
+MS Source                : 230 C   maximum 250 C
+MS Quad                  : 150 C   maximum 200 C
+
+
+                             END OF MS ACQUISITION PARAMETERS
+
+
+                              TUNE PARAMETERS for SN: US92032548
+                        -----------------------------
+
+ Trace Ion Detection is OFF.
+
+ EMISSION    :      34.610
+ ENERGY      :      69.922
+ REPELLER    :      25.432
+ IONFOCUS    :      86.361
+ ENTRANCE_LE :       0.000
+ EMVOLTS     :    1564.706
+                               Actual EMV  :    1482.35
+                               GAIN FACTOR :       0.97
+ AMUGAIN     :    1639.000
+ AMUOFFSET   :     137.125
+ FILAMENT    :       2.000
+ DCPOLARITY  :       0.000
+ ENTLENSOFFS :     18.824@  3    18.824@ 50    14.808@ 69    15.059@131    15.561@219    18.071@414    17.569@502    17.569@1049 
+ MASSGAIN    :    -852.000   
+ MASSOFFSET  :     -41.000   
+
+                           END OF TUNE PARAMETERS
+                      ------------------------------------
+
+
+
+                      END OF INSTRUMENT CONTROL PARAMETERS
+                      ------------------------------------
+

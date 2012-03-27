@@ -1,0 +1,177 @@
+
+
+                    INSTRUMENT CONTROL PARAMETERS:    GCMSD_1
+                    -----------------------------------------
+
+   C:\MSDCHEM\1\METHODS\STANDARD_FFAP.M
+      Thu Sep 22 09:23:30 2011
+
+Control Information
+------- -----------
+
+Sample Inlet      :  GC
+Injection Source  :  GC ALS
+Mass Spectrometer :  Enabled
+
+Oven
+Equilibration Time                           0.5 min
+Oven Program                                 On
+    60 蚓 for 1 min
+    then 10 蚓/min to 240 蚓 for 6 min
+Run Time                                     25 min
+0.5 min (Post Run)                           60 蚓
+
+
+
+
+
+Front Injector
+Syringe Size                                 10 無
+Injection Volume                             1 無
+Injection Repetitions                        1
+Injection Delay                              0 sec
+Solvent A Washes (PreInj)                    2
+Solvent A Washes (PostInj)                   2
+Solvent A Volume                             3 無
+Solvent B Washes (PreInj)                    2
+Solvent B Washes (PostInj)                   2
+Solvent B Volume                             3 無
+Sample Washes                                2
+Sample Wash Volume                           3 無
+Sample Pumps                                 3
+Dwell Time (PreInj)                          0 min
+Dwell Time (PostInj)                         0 min
+Solvent Wash Draw Speed                      300 無/min
+Solvent Wash Dispense Speed                  6000 無/min
+Sample Wash Draw Speed                       300 無/min
+Sample Wash Dispense Speed                   6000 無/min
+Injection Dispense Speed                     6000 無/min
+Viscosity Delay                              0 sec
+Sample Depth                                 Disabled
+
+
+Sample Overlap
+Sample overlap is not enabled
+
+
+
+Front SS Inlet He
+Mode                                         Splitless
+Heater                                       On    240 蚓
+Pressure                                     On    12.376 psi
+Total Flow                                   On    54 mL/min
+Septum Purge Flow                            On    3 mL/min
+Gas Saver                                    Off
+Purge Flow to Split Vent                     50 mL/min at 1.5 min
+
+
+Thermal Aux 2 {MSD Transfer Line}
+Heater                                       On
+Temperature Program                          On
+    240 蚓 for 0 min
+Run Time                                     25 min
+
+
+Column #1
+HP-5MS  5% Phenyl Methyl SiloxHP-5MS  5% Phenyl Methyl Silox
+325 蚓: 30 m x 250 痠 x 0.25 痠
+In: Front SS Inlet He
+Out: Other
+
+(Initial)                                    60 蚓
+Pressure                                     12.376 psi
+Flow                                         1 mL/min
+Average Velocity                             26.042 cm/sec
+Holdup Time                                  1.9199 min
+Flow Program                                 On
+    1 mL/min for 0 min
+Run Time                                     25 min
+0.5 min (Post Run)                           0.3 mL/min
+
+
+
+
+
+
+
+
+
+
+
+
+
+Signals
+ Test Plot                                   Save Off
+                                             50 Hz
+ Test Plot                                   Save Off
+                                             50 Hz
+ Test Plot                                   Save Off
+                                             50 Hz
+ Test Plot                                   Save Off
+                                             50 Hz
+
+
+                                MS ACQUISITION PARAMETERS
+
+
+General Information
+------- -----------
+
+Tune File                : atune.u
+Acquistion Mode          : Scan
+
+
+MS Information
+-- -----------
+
+Solvent Delay            : 6.00 min
+
+EMV Mode                 : Gain Factor
+Gain Factor              : 0.50
+Resulting EM Voltage     : 1424
+
+[Scan Parameters]
+
+Low Mass                 : 25.0
+High Mass                : 500.0
+Threshold                : 150
+Sample #                 : 1       A/D Samples    2
+
+[MSZones]
+
+MS Source                : 230 C   maximum 250 C
+MS Quad                  : 150 C   maximum 200 C
+
+
+                             END OF MS ACQUISITION PARAMETERS
+
+
+                              TUNE PARAMETERS for SN: US92032548
+                        -----------------------------
+
+ Trace Ion Detection is OFF.
+
+ EMISSION    :      34.610
+ ENERGY      :      69.922
+ REPELLER    :      27.777
+ IONFOCUS    :      88.259
+ ENTRANCE_LE :      16.000
+ EMVOLTS     :    1470.588
+                               Actual EMV  :    1423.53
+                               GAIN FACTOR :       0.48
+ AMUGAIN     :    1614.000
+ AMUOFFSET   :     125.125
+ FILAMENT    :       2.000
+ DCPOLARITY  :       0.000
+ ENTLENSOFFS :      20.329
+ MASSGAIN    :    -852.000   
+ MASSOFFSET  :     -37.000   
+
+                           END OF TUNE PARAMETERS
+                      ------------------------------------
+
+
+
+                      END OF INSTRUMENT CONTROL PARAMETERS
+                      ------------------------------------
+

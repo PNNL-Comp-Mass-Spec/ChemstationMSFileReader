@@ -1,0 +1,4 @@
+Chemstation MS File Reader
+
+Version 1.0.4469; March 27, 2012
+	- Initial release
