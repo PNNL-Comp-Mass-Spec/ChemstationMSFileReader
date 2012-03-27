@@ -55,8 +55,11 @@
     <Import Include="System.Collections.Generic" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="clsByteConverter.vb" />
     <Compile Include="clsChemstationMSFileReader.vb" />
     <Compile Include="AssemblyInfo.vb" />
+    <Compile Include="clsDataHeader.vb" />
+    <Compile Include="clsSpectralRecord.vb" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="My Project\" />
