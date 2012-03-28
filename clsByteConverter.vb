@@ -15,7 +15,17 @@ Friend Class clsByteConverter
 		byteArray(1) = CByte(fs.ReadByte())
 		byteArray(0) = CByte(fs.ReadByte())
 
-		Return BitConverter.ToInt16(byteArray, 0)
+		Try
+			If BitConverter.ToInt16(byteArray, 0) < 0 Then
+				Return BitConverter.ToInt16(byteArray, 0)
+			Else
+				Return BitConverter.ToInt16(byteArray, 0)
+			End If
+
+		Catch ex As Exception
+			Return 0
+		End Try
+
 
 	End Function
 
@@ -28,13 +38,15 @@ Friend Class clsByteConverter
 	Public Function ReadUInt16SwapBytes(ByRef fs As System.IO.FileStream) As Int32
 
 		Dim byteArray As Byte()
-		ReDim byteArray(3)
-		byteArray(3) = CByte(fs.ReadByte())
-		byteArray(2) = CByte(fs.ReadByte())
+		ReDim byteArray(1)
 		byteArray(1) = CByte(fs.ReadByte())
 		byteArray(0) = CByte(fs.ReadByte())
 
-		Return BitConverter.ToUInt16(byteArray, 0)
+		Try
+			Return BitConverter.ToUInt16(byteArray, 0)
+		Catch ex As Exception
+			Return 0
+		End Try
 
 	End Function
 

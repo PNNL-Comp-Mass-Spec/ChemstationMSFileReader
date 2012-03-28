@@ -21,6 +21,7 @@ Module modMain
 
 		Dim lstFilesToTest As System.Collections.Generic.List(Of String) = New System.Collections.Generic.List(Of String)
 		Dim strMessage As String
+		Dim intScanNumber As Integer
 
 		Try
 
@@ -40,7 +41,7 @@ Module modMain
 					Console.WriteLine(oReader.Header.FileTypeName)
 					Console.WriteLine(oReader.Header.AcqDate)
 
-					strMessage = "SpectrumDescription" & ControlChars.Tab & "Minutes" & ControlChars.Tab & "BPI" & ControlChars.Tab & "TIC"
+					strMessage = "SpectrumDescription" & ControlChars.Tab & "Minutes" & ControlChars.Tab & "BPI" & ControlChars.Tab & "TIC" & ControlChars.Tab & "TotalSignalRawFromIndex"
 
 					Dim lstSpecInfo As System.Collections.Generic.List(Of String) = New System.Collections.Generic.List(Of String)
 					lstSpecInfo.Add(strMessage)
@@ -49,11 +50,15 @@ Module modMain
 					intModValue = CInt(Math.Ceiling(oReader.Header.SpectraCount / 10))
 
 					For intSpectrumIndex As Integer = 0 To oReader.Header.SpectraCount - 1
+
+						intScanNumber = intSpectrumIndex + 1
+
 						Dim oSpectrum As ChemstationMSFileReader.clsSpectralRecord = Nothing
+						Dim intTotalSignalRawFromIndex As Integer = 0
 
-						oReader.GetSpectrum(intSpectrumIndex, oSpectrum)
+						oReader.GetSpectrum(intSpectrumIndex, oSpectrum, intTotalSignalRawFromIndex)
 
-						strMessage = "SpectrumIndex " & intSpectrumIndex & " at " & oSpectrum.RetentionTimeMinutes.ToString("0.00") & " minutes; base peak " & oSpectrum.BasePeakMZ & " m/z with intensity " & oSpectrum.BasePeakAbundance & "; TIC = " & oSpectrum.TIC.ToString("0") & ControlChars.Tab & oSpectrum.RetentionTimeMinutes.ToString("0.00") & ControlChars.Tab & oSpectrum.BasePeakAbundance & ControlChars.Tab & oSpectrum.TIC
+						strMessage = "SpectrumIndex " & intSpectrumIndex & " at " & oSpectrum.RetentionTimeMinutes.ToString("0.00") & " minutes; base peak " & oSpectrum.BasePeakMZ & " m/z with intensity " & oSpectrum.BasePeakAbundance & "; TIC = " & oSpectrum.TIC.ToString("0") & ControlChars.Tab & oSpectrum.RetentionTimeMinutes.ToString("0.00") & ControlChars.Tab & oSpectrum.BasePeakAbundance & ControlChars.Tab & oSpectrum.TIC & ControlChars.Tab & intTotalSignalRawFromIndex
 						lstSpecInfo.Add(strMessage)
 						If intSpectrumIndex Mod intModValue = 0 Then
 							Console.WriteLine(strMessage)
@@ -92,7 +97,7 @@ Module modMain
 			Next
 
 		Catch ex As Exception
-			Console.WriteLine("Error: " & ControlChars.NewLine & ex.Message)
+			Console.WriteLine("Error at scan " & intScanNumber & ": " & ControlChars.NewLine & ex.Message)
 			Console.WriteLine(ex.StackTrace)
 		End Try
 

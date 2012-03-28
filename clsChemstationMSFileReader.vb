@@ -22,8 +22,7 @@ Public Class clsChemstationDataMSFileReader
 	Protected Structure udtIndexEntryType
 		Public OffsetBytes As Int32					' Stored as integer (in words); converted to Byte offset by this class
 		Public RetentionTimeMsec As Int32			' Stored in milliseconds
-		Public TotalSignalRaw As Int32
-		Public TotalSignalScaled As Double			' Total Signal re-scaled to the range defined by Header.SignalMinimum to Header.SignalMaximum (via a log transformation)
+		Public TotalSignalRaw As Int32				' This Total Signal value is representative of TIC, but it has been scaled down by some sort of polynomial transformation
 		Public ReadOnly Property RetentionTimeMinutes() As Single
 			Get
 				Return RetentionTimeMsec / 60000.0!
@@ -59,21 +58,23 @@ Public Class clsChemstationDataMSFileReader
 		ReadHeaders(sDatafilePath)
 	End Sub
 
+	Public Function GetSpectrum(ByVal intSpectrumIndex As Integer, ByRef oSpectrum As clsSpectralRecord) As Boolean
+		Return GetSpectrum(intSpectrumIndex, oSpectrum, 0)
+	End Function
+
 	''' <summary>
 	'''  Returns the mass spectrum at the specified index
 	''' </summary>
 	''' <param name="intSpectrumIndex">0-based spectrum index</param>
 	''' <param name="oSpectrum">Spectrum object (output)</param>
+	''' <param name="intTotalSignalRawFromIndex">TIC value as reported by the Index; this value has been scaled down by some sort of polynomial transformation</param>
 	''' <returns>True if success, false if an error</returns>
-	Public Function GetSpectrum(ByVal intSpectrumIndex As Integer, ByRef oSpectrum As clsSpectralRecord) As Boolean
+	Public Function GetSpectrum(ByVal intSpectrumIndex As Integer, ByRef oSpectrum As clsSpectralRecord, ByRef intTotalSignalRawFromIndex As Integer) As Boolean
 
 		Dim sngRetentionTimeMinutes As Single
-		Dim intTotalSignalRaw As Int32
-		Dim dblTotalSignalScaled As Double
 
 		sngRetentionTimeMinutes = 0
-		intTotalSignalRaw = 0
-		dblTotalSignalScaled = 0
+		intTotalSignalRawFromIndex = 0
 
 		If intSpectrumIndex < 0 OrElse intSpectrumIndex >= mIndexList.Count Then
 			' Index out of range
@@ -87,8 +88,7 @@ Public Class clsChemstationDataMSFileReader
 
 			' These Total Signal values are not accurate
 			' Use the TIC value reported by oSpectrum instead
-			intTotalSignalRaw = mIndexList(intSpectrumIndex).TotalSignalRaw
-			dblTotalSignalScaled = mIndexList(intSpectrumIndex).TotalSignalScaled
+			intTotalSignalRawFromIndex = mIndexList(intSpectrumIndex).TotalSignalRaw
 
 			oSpectrum = New clsSpectralRecord(mFileStream, intByteOffset)
 
@@ -165,12 +165,12 @@ Public Class clsChemstationDataMSFileReader
 	''' <param name="fsDatafile"></param>
 	''' <returns>True if success, false if an error</returns>
 	Protected Function ReadIndexRecords(ByRef fsDatafile As System.IO.FileStream) As Boolean
-		Const LOG_BASE As Integer = 8
 
 		Dim bc As New clsByteConverter()
 
-		Dim intTotalSignalMin As Integer = Integer.MaxValue
-		Dim intTotalSignalMax As Integer = 0
+		'Const LOG_BASE As Integer = 8
+		'Dim intTotalSignalMin As Integer = Integer.MaxValue
+		'Dim intTotalSignalMax As Integer = 0
 
 		Try
 			' Move the filestream to the correct byte offset
@@ -183,36 +183,36 @@ Public Class clsChemstationDataMSFileReader
 				udtEntry.RetentionTimeMsec = bc.ReadInt32SwapBytes(fsDatafile)
 				udtEntry.TotalSignalRaw = bc.ReadInt32SwapBytes(fsDatafile)
 
-				If udtEntry.TotalSignalRaw > intTotalSignalMax Then intTotalSignalMax = udtEntry.TotalSignalRaw
-				If udtEntry.TotalSignalRaw < intTotalSignalMin Then intTotalSignalMin = udtEntry.TotalSignalRaw
+				'If udtEntry.TotalSignalRaw > intTotalSignalMax Then intTotalSignalMax = udtEntry.TotalSignalRaw
+				'If udtEntry.TotalSignalRaw < intTotalSignalMin Then intTotalSignalMin = udtEntry.TotalSignalRaw
 
 				mIndexList.Add(udtEntry)
 
 			Next
 
-			If mIndexList.Count > 0 Then
-				' Now compute TotalSignalScaled for each entry in mIndexList
-				Dim dblScaledSignal As Double
-				Dim dblTotalSignalMinLog As Double = Math.Log(intTotalSignalMin, LOG_BASE)
-				Dim dblTotalSignalMaxLog As Double = Math.Log(intTotalSignalMax, LOG_BASE)
+			'If mIndexList.Count > 0 Then
+			'	' Now compute TotalSignalScaled for each entry in mIndexList
+			'	Dim dblScaledSignal As Double
+			'	Dim dblTotalSignalMinLog As Double = Math.Log(intTotalSignalMin, LOG_BASE)
+			'	Dim dblTotalSignalMaxLog As Double = Math.Log(intTotalSignalMax, LOG_BASE)
 
-				For intIndex As Integer = 0 To mIndexList.Count - 1
-					Dim udtEntry As udtIndexEntryType
+			'	For intIndex As Integer = 0 To mIndexList.Count - 1
+			'		Dim udtEntry As udtIndexEntryType
 
-					udtEntry = mIndexList(intIndex)
+			'		udtEntry = mIndexList(intIndex)
 
-					' Compute the log of the number
-					dblScaledSignal = Math.Log(udtEntry.TotalSignalRaw, LOG_BASE)
+			'		' Compute the log of the number
+			'		dblScaledSignal = Math.Log(udtEntry.TotalSignalRaw, LOG_BASE)
 
-					' Scale to a value between 0 and 1
-					dblScaledSignal = (dblScaledSignal - dblTotalSignalMinLog) / (dblTotalSignalMaxLog - dblTotalSignalMinLog)
+			'		' Scale to a value between 0 and 1
+			'		dblScaledSignal = (dblScaledSignal - dblTotalSignalMinLog) / (dblTotalSignalMaxLog - dblTotalSignalMinLog)
 
-					' Scale to the range Header.SignalMinimum to Header.SignalMaximum
-					udtEntry.TotalSignalScaled = dblScaledSignal * (Header.SignalMaximum - Header.SignalMinimum) + Header.SignalMinimum
+			'		' Scale to the range Header.SignalMinimum to Header.SignalMaximum
+			'		udtEntry.TotalSignalScaled = dblScaledSignal * (Header.SignalMaximum - Header.SignalMinimum) + Header.SignalMinimum
 
-					mIndexList(intIndex) = udtEntry
-				Next
-			End If
+			'		mIndexList(intIndex) = udtEntry
+			'	Next
+			'End If
 
 
 		Catch ex As Exception

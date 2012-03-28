@@ -145,10 +145,10 @@ Public Class clsSpectralRecord
 
 		Dim bc As New clsByteConverter()
 
-		Dim intMass20x() As Int16
+		Dim intMass20x() As Int32		' Stored as a UInt16 number
 		Dim intAbundance() As Int32
 
-		Dim intPackedAbundance As Int16
+		Dim intIndexCurrent As Integer
 
 		Try
 			Me.Clear()
@@ -165,16 +165,17 @@ Public Class clsSpectralRecord
 			mNumberOfPeaks = bc.ReadInt16SwapBytes(fsDatafile)
 			mBasePeak20x = bc.ReadUInt16SwapBytes(fsDatafile)		   ' Note: Stored as UInt16; stores Mass * 20
 
-			mBasePeakAbundance = UnpackAbundance(bc.ReadInt16SwapBytes(fsDatafile))		' Stored as a packed Int16; we unpack using UnpackAbundance
+			mBasePeakAbundance = ReadPackedAbundance(fsDatafile)						' Stored as a packed Int16; we unpack using ReadPackedAbundance
 
 			ReDim intMass20x(mNumberOfPeaks - 1)
 			ReDim intAbundance(mNumberOfPeaks - 1)
 
 			For intIndex As Integer = 0 To mNumberOfPeaks - 1
-				intMass20x(intIndex) = bc.ReadInt16SwapBytes(fsDatafile)
-				intPackedAbundance = bc.ReadInt16SwapBytes(fsDatafile)					' Stored as a packed Int16; we unpack using UnpackAbundance
+				intIndexCurrent = intIndex
 
-				intAbundance(intIndex) = UnpackAbundance(intPackedAbundance)
+				intMass20x(intIndex) = bc.ReadUInt16SwapBytes(fsDatafile)
+				intAbundance(intIndex) = ReadPackedAbundance(fsDatafile)				' Stored as a packed Int16; we unpack using ReadPackedAbundance
+
 				mTIC += intAbundance(intIndex)
 			Next
 
@@ -192,7 +193,7 @@ Public Class clsSpectralRecord
 			mMzMax = mMzs(mMzs.Count - 1)
 
 		Catch ex As Exception
-			Throw New Exception("Error reading spectrum: " & ex.Message, ex)
+			Throw New Exception("Error reading spectrum, index=" & intIndexCurrent & ": " & ex.Message, ex)
 			mValid = False
 		End Try
 
@@ -200,64 +201,54 @@ Public Class clsSpectralRecord
 	End Sub
 
 	''' <summary>
-	''' Unpack abundance stored as 4-bit scale with 12 bit mantissa
+	''' Read packed abundance stored as 2-bit scale with 14 bit mantissa
 	''' </summary>
-	''' <param name="intAbundancePacked">Packed abundance</param>
+	''' <param name="fs">FileStream object</param>
 	''' <returns>Unpacked abundance</returns>
-	Private Function UnpackAbundance(ByVal intAbundancePacked As Int16) As Int32
+	Private Function ReadPackedAbundance(ByRef fs As System.IO.FileStream) As Int32
 
-		Dim intAbundanceScale As Byte
+		Dim byteArray As Byte()
+		Dim byteArrayRev As Byte()
+
+		ReDim byteArray(1)
+		ReDim byteArrayRev(1)
+		byteArray(0) = CByte(fs.ReadByte())
+		byteArray(1) = CByte(fs.ReadByte())
+
+		byteArrayRev(0) = byteArray(1)
+		byteArrayRev(1) = byteArray(0)
+
+		Dim intAbundanceScale As Integer
 		Dim intAbundanceMantissa As Int32
 
-		Dim intScaleMask As UInt16 = 61440			' 1111 0000 0000 0000
-		Dim intMantissaMask As UInt16 = 4095		' 0000 1111 1111 1111
+		Try
+			' The abundance scale is stored in the first 2 bits of the first byte in byteArray()
+			' Apply a bitmask of 0000 0011 to extract the value
+			intAbundanceScale = byteArray(0) And 3
 
-		' Abundance is packed in powers of 8
-		' The first 4 bits of intAbundancePacked represent the Scale and will be 0, 1, 2, or 3 (x1, x8, x64, or x512)
-		' The remaining 12 bits of intAbundancePacked are the Mantissa, ranging from 0 to 16383
+			Dim intAbundancePacked As UInt16
+			intAbundancePacked = BitConverter.ToUInt16(byteArrayRev, 0)
 
-		' Extract the first 4 bits by applying bitmask intScaleMask, then bit shifting 12 bits to the right
-		intAbundanceScale = CByte((intAbundancePacked And intScaleMask) >> 12)
+			' Shift off the first 2 bits then obtain the bytes
+			Dim bytesMantissa() As Byte
+			bytesMantissa = BitConverter.GetBytes(intAbundancePacked >> 2)
 
-		' Extract the mantissa by applying bitmask intMantissaMask; no need to bit shift
-		intAbundanceMantissa = intAbundancePacked And intMantissaMask
+			' Convert the newly obtained bytes back to a UInt16 number
+			intAbundanceMantissa = BitConverter.ToUInt16(bytesMantissa, 0)
 
-		' Scale the abundance by powers of 8 (if intAbundanceScale > 0)
-		For intIndex As Integer = 1 To intAbundanceScale
-			intAbundanceMantissa *= 8
-		Next
+			' Scale the abundance by powers of 8 (if intAbundanceScale > 0)
+			For intIndex As Integer = 1 To intAbundanceScale
+				intAbundanceMantissa *= 8
+			Next
 
-		Return intAbundanceMantissa
+			Return intAbundanceMantissa
 
-		' The following code shows how we can use a BitArray object to reverse the bits
-		' This was explored to confirm that the bit order in intAbundancePacked is correct
+		Catch ex As Exception
+			Return 0
+		End Try
 
-		'Dim bits As BitArray
-		'Dim bitsReversed As BitArray
-
-		'bits = New BitArray(BitConverter.GetBytes(intAbundancePacked))
-		'bitsReversed = New BitArray(bits.Length)
-
-		'For intBitIndex As Integer = 0 To bits.Length - 1
-		'	bitsReversed(intBitIndex) = bits(bits.Length - intBitIndex - 1)
-		'Next
-
-		'Dim newBytes() As Byte
-		'ReDim newBytes(CInt(bitsReversed.Length / 8))
-		'bitsReversed.CopyTo(newBytes, 0)
-
-		'Dim intAbundancePackedAlt As Int16
-		'Dim intAbundanceMantissaAlt As Int32
-		'intAbundancePackedAlt = BitConverter.ToInt16(newBytes, 0)
-
-		'Dim intMantissaMaskAlt As UInt16 = 65520	' 1111 1111 1111 0000
-		'intAbundanceMantissaAlt = (intAbundancePackedAlt And intMantissaMaskAlt) >> 4
-
-		'' Scale the abundance by powers of 8
-		'For intIndex As Integer = 1 To intAbundanceScale
-		'	intAbundanceMantissaAlt *= 8
-		'Next
-
+		Return 0
 
 	End Function
+
 End Class
