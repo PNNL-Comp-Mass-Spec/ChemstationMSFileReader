@@ -189,8 +189,13 @@ Public Class clsSpectralRecord
 				mIntensites.Add(intAbundance(intIndex))
 			Next
 
-			mMzMin = mMzs(0)
-			mMzMax = mMzs(mMzs.Count - 1)
+			If mNumberOfPeaks > 0 Then
+				mMzMin = mMzs(0)
+				mMzMax = mMzs(mMzs.Count - 1)
+			Else
+				mMzMin = 0
+				mMzMax = 0
+			End If
 
 		Catch ex As Exception
 			Throw New Exception("Error reading spectrum, index=" & intIndexCurrent & ": " & ex.Message, ex)

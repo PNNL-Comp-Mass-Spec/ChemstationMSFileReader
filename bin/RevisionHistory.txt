@@ -1,4 +1,7 @@
 Chemstation MS File Reader
 
+Version 1.0.4553; June 19, 2012
+	- Fixed bug storing minimum and maximum m/z values when a spectrum contains no data
+
 Version 1.0.4469; March 27, 2012
 	- Initial release
