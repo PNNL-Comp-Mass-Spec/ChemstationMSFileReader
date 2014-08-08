@@ -6,7 +6,7 @@
 '
 ' Written by Matthew Monroe for the Department of Energy (PNNL, Richland, WA) in 2012
 '
-' Last modified March 27, 2012
+' Last modified August 7, 2014
 
 Public Class clsChemstationDataMSFileReader
 	Implements IDisposable
@@ -36,11 +36,11 @@ Public Class clsChemstationDataMSFileReader
 
 	Public Header As clsDataHeader
 
-	Protected mFileStream As System.IO.FileStream
-	Protected mNormalizationRecordList As System.Collections.Generic.List(Of udtNormalizationRecordType)
+	Protected mFileStream As IO.FileStream
+	Protected mNormalizationRecordList As List(Of udtNormalizationRecordType)
 
 	' Index entries (aka Directory Records)
-	Protected mIndexList As System.Collections.Generic.List(Of udtIndexEntryType)
+	Protected ReadOnly mIndexList As List(Of udtIndexEntryType)
 
 #End Region
 
@@ -51,8 +51,8 @@ Public Class clsChemstationDataMSFileReader
 	''' <remarks></remarks>
 	Public Sub New(ByVal sDatafilePath As String)
 
-		mNormalizationRecordList = New System.Collections.Generic.List(Of udtNormalizationRecordType)
-		mIndexList = New System.Collections.Generic.List(Of udtIndexEntryType)
+		mNormalizationRecordList = New List(Of udtNormalizationRecordType)
+		mIndexList = New List(Of udtIndexEntryType)
 
 		' Read the headers from the data file
 		ReadHeaders(sDatafilePath)
@@ -71,9 +71,7 @@ Public Class clsChemstationDataMSFileReader
 	''' <returns>True if success, false if an error</returns>
 	Public Function GetSpectrum(ByVal intSpectrumIndex As Integer, ByRef oSpectrum As clsSpectralRecord, ByRef intTotalSignalRawFromIndex As Integer) As Boolean
 
-		Dim sngRetentionTimeMinutes As Single
-
-		sngRetentionTimeMinutes = 0
+		Dim sngRetentionTimeMinutes As Single = 0
 		intTotalSignalRawFromIndex = 0
 
 		If intSpectrumIndex < 0 OrElse intSpectrumIndex >= mIndexList.Count Then
@@ -92,7 +90,7 @@ Public Class clsChemstationDataMSFileReader
 
 			oSpectrum = New clsSpectralRecord(mFileStream, intByteOffset)
 
-			If oSpectrum.RetentionTimeMinutes <> sngRetentionTimeMinutes Then
+			If Math.Abs(oSpectrum.RetentionTimeMinutes - sngRetentionTimeMinutes) > Single.Epsilon Then
 				Console.WriteLine("  ... retention time mismatch; this is unexpected: " & oSpectrum.RetentionTimeMinutes & " vs. " & sngRetentionTimeMinutes)
 			End If
 		End If
@@ -110,17 +108,16 @@ Public Class clsChemstationDataMSFileReader
 
 		Dim blnSuccess As Boolean = False
 
-		If Not System.IO.File.Exists(sDataFilePath) Then
-			Throw New System.IO.FileNotFoundException("Data file not found", sDataFilePath)
+		If Not IO.File.Exists(sDataFilePath) Then
+			Throw New IO.FileNotFoundException("Data file not found", sDataFilePath)
 		End If
 
 		Try
 			' Open the data file
-			mFileStream = New System.IO.FileStream(sDataFilePath, IO.FileMode.Open, IO.FileAccess.Read, IO.FileShare.Read)
+			mFileStream = New IO.FileStream(sDataFilePath, IO.FileMode.Open, IO.FileAccess.Read, IO.FileShare.Read)
 
 		Catch ex As Exception
 			Throw New Exception("Error opening data file: " & ex.Message, ex)
-			Return False
 		End Try
 
 		Try
@@ -128,8 +125,7 @@ Public Class clsChemstationDataMSFileReader
 			' Note that clsDataHeader will throw an exception if it occurs
 			Header = New clsDataHeader(mFileStream)
 		Catch ex As Exception
-			Throw ex
-			Return False
+			Throw
 		End Try
 
 		If Header Is Nothing OrElse Not Header.Valid Then
@@ -140,8 +136,7 @@ Public Class clsChemstationDataMSFileReader
 			' Read the Normalization records
 			blnSuccess = ReadNormalizationRecords(mFileStream)
 		Catch ex As Exception
-			Throw ex
-			Return False
+			Throw
 		End Try
 
 		If Not blnSuccess Then Return False
@@ -150,8 +145,7 @@ Public Class clsChemstationDataMSFileReader
 			' Read the Index entries
 			blnSuccess = ReadIndexRecords(mFileStream)
 		Catch ex As Exception
-			Throw ex
-			Return False
+			Throw
 		End Try
 
 		Return blnSuccess
@@ -164,7 +158,7 @@ Public Class clsChemstationDataMSFileReader
 	''' </summary>
 	''' <param name="fsDatafile"></param>
 	''' <returns>True if success, false if an error</returns>
-	Protected Function ReadIndexRecords(ByRef fsDatafile As System.IO.FileStream) As Boolean
+	Protected Function ReadIndexRecords(ByRef fsDatafile As IO.FileStream) As Boolean
 
 		Dim bc As New clsByteConverter()
 
@@ -176,7 +170,7 @@ Public Class clsChemstationDataMSFileReader
 			' Move the filestream to the correct byte offset
 			fsDatafile.Seek(Header.DirectoryOffset, IO.SeekOrigin.Begin)
 
-			For intIndex As Integer = 0 To Header.SpectraCount - 1
+			For intIndex = 0 To Header.SpectraCount - 1
 				Dim udtEntry As udtIndexEntryType
 
 				udtEntry.OffsetBytes = bc.WordOffsetToBytes(bc.ReadInt32SwapBytes(fsDatafile) - 1)
@@ -217,7 +211,6 @@ Public Class clsChemstationDataMSFileReader
 
 		Catch ex As Exception
 			Throw New Exception("Error reading index records: " & ex.Message, ex)
-			Return False
 		End Try
 
 		Return True
@@ -229,7 +222,7 @@ Public Class clsChemstationDataMSFileReader
 	''' </summary>
 	''' <param name="fsDatafile"></param>
 	''' <returns>True if success, false if an error</returns>
-	Protected Function ReadNormalizationRecords(ByRef fsDatafile As System.IO.FileStream) As Boolean
+	Protected Function ReadNormalizationRecords(ByRef fsDatafile As IO.FileStream) As Boolean
 		Dim bc As New clsByteConverter()
 
 		Try
@@ -238,7 +231,7 @@ Public Class clsChemstationDataMSFileReader
 				' Move the filestream to the correct byte offset
 				fsDatafile.Seek(Header.NormalizationRecordsOffset, IO.SeekOrigin.Begin)
 
-				For intIndex As Integer = 0 To 9
+				For intIndex = 0 To 9
 					Dim udtRecord As udtNormalizationRecordType
 
 					udtRecord.Mass = bc.ReadSingleSwapBytes(fsDatafile)
@@ -253,7 +246,6 @@ Public Class clsChemstationDataMSFileReader
 
 		Catch ex As Exception
 			Throw New Exception("Error reading normalization records: " & ex.Message, ex)
-			Return False
 		End Try
 
 		Return True

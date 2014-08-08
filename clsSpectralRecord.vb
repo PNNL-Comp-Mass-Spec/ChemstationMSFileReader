@@ -228,18 +228,16 @@ Public Class clsSpectralRecord
 
 		Try
 			' The abundance scale is stored in the first 2 bits of the first byte in byteArray()
-			' Apply a bitmask of 0000 0011 to extract the value
-			intAbundanceScale = byteArray(0) And 3
+			' For example, 11 in 1100 0000
+			' Right shift by 6 bits to extract the value
+			intAbundanceScale = byteArray(0) >> 6
 
 			Dim intAbundancePacked As UInt16
 			intAbundancePacked = BitConverter.ToUInt16(byteArrayRev, 0)
 
-			' Shift off the first 2 bits then obtain the bytes
-			Dim bytesMantissa() As Byte
-			bytesMantissa = BitConverter.GetBytes(intAbundancePacked >> 2)
-
-			' Convert the newly obtained bytes back to a UInt16 number
-			intAbundanceMantissa = BitConverter.ToUInt16(bytesMantissa, 0)
+			' Mask off the first 2 bits then obtain the bytes
+			' 16383 in binary is 0011 1111 1111 1111
+			intAbundanceMantissa = intAbundancePacked And 16383
 
 			' Scale the abundance by powers of 8 (if intAbundanceScale > 0)
 			For intIndex As Integer = 1 To intAbundanceScale

@@ -1,5 +1,8 @@
 Chemstation MS File Reader
 
+Version 1.0.5332; August 7, 2014
+	- Fixed bit handling bug when extracting packed abundance values
+
 Version 1.0.4553; June 19, 2012
 	- Fixed bug storing minimum and maximum m/z values when a spectrum contains no data
 
