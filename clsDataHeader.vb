@@ -36,11 +36,11 @@ Public Class clsDataHeader
 
 	Public ReadOnly Property AcqDate() As DateTime
 		Get
-			Dim dtDate As System.DateTime
+			Dim dtDate As DateTime
 			If DateTime.TryParse(mAcqDate, dtDate) Then
 				Return dtDate
 			Else
-				Return System.DateTime.MinValue
+				Return DateTime.MinValue
 			End If
 		End Get
 	End Property
@@ -214,7 +214,7 @@ Public Class clsDataHeader
 	''' </summary>
 	''' <param name="fsDatafile"></param>
 	''' <remarks></remarks>
-	Public Sub New(ByRef fsDatafile As System.IO.FileStream)
+	Public Sub New(ByRef fsDatafile As IO.FileStream)
 		ReadFromFile(fsDatafile)
 	End Sub
 
@@ -223,17 +223,17 @@ Public Class clsDataHeader
 	''' </summary>
 	''' <param name="fs">Input file stream</param>
 	''' <returns>True if success, false if an error</returns>
-	Protected Function ReadFromFile(ByRef fs As System.IO.FileStream) As Boolean
+	Protected Function ReadFromFile(ByRef fs As IO.FileStream) As Boolean
 
 		Dim bc As New clsByteConverter()
 
 		Try
 
-			mDatasetName = System.IO.Path.GetFileName(fs.Name)
+			mDatasetName = IO.Path.GetFileName(fs.Name)
 			If mDatasetName.ToLower() = "data.ms" Then
 				' Use the folder name as the dataset name
-				Dim fiFile As System.IO.FileInfo
-				fiFile = New System.IO.FileInfo(fs.Name)
+				Dim fiFile As IO.FileInfo
+				fiFile = New IO.FileInfo(fs.Name)
 				mDatasetName = fiFile.Directory.Name
 				If mDatasetName.ToUpper().EndsWith(".D") Then
 					mDatasetName = mDatasetName.Substring(0, mDatasetName.Length - 2)

@@ -23,8 +23,8 @@ Public Class clsSpectralRecord
 	' Mass is represented by UInt16 and stores the mass value times 20
 	' Intensity is represented by a packed Int16 value
 
-	Protected mMzs As System.Collections.Generic.List(Of Single)
-	Protected mIntensites As System.Collections.Generic.List(Of Int32)
+	Protected mMzs As List(Of Single)
+	Protected mIntensites As List(Of Int32)
 
 #Region "Properties"
 
@@ -52,13 +52,13 @@ Public Class clsSpectralRecord
 		End Get
 	End Property
 
-	Public ReadOnly Property Intensities() As System.Collections.Generic.List(Of Int32)
+	Public ReadOnly Property Intensities() As List(Of Int32)
 		Get
 			Return mIntensites
 		End Get
 	End Property
 
-	Public ReadOnly Property Mzs() As System.Collections.Generic.List(Of Single)
+	Public ReadOnly Property Mzs() As List(Of Single)
 		Get
 			Return mMzs
 		End Get
@@ -107,7 +107,7 @@ Public Class clsSpectralRecord
 	''' <summary>
 	''' Populate a spectrum object with the data at the specified byte offset
 	''' </summary>
-	Public Sub New(ByRef fsDatafile As System.IO.FileStream, ByVal intByteOffsetStart As Integer)
+	Public Sub New(ByRef fsDatafile As IO.FileStream, ByVal intByteOffsetStart As Integer)
 		ReadFromFile(fsDatafile, intByteOffsetStart)
 	End Sub
 
@@ -118,13 +118,13 @@ Public Class clsSpectralRecord
 	Protected Sub Clear()
 
 		If mMzs Is Nothing Then
-			mMzs = New System.Collections.Generic.List(Of Single)
+			mMzs = New List(Of Single)
 		Else
 			mMzs.Clear()
 		End If
 
 		If mIntensites Is Nothing Then
-			mIntensites = New System.Collections.Generic.List(Of Int32)
+			mIntensites = New List(Of Int32)
 		Else
 			mIntensites.Clear()
 		End If
@@ -141,7 +141,7 @@ Public Class clsSpectralRecord
 	''' <param name="fsDatafile"></param>
 	''' <param name="intByteOffsetStart"></param>
 	''' <remarks></remarks>
-	Protected Sub ReadFromFile(ByRef fsDatafile As System.IO.FileStream, ByVal intByteOffsetStart As Integer)
+	Protected Sub ReadFromFile(ByRef fsDatafile As IO.FileStream, ByVal intByteOffsetStart As Integer)
 
 		Dim bc As New clsByteConverter()
 
@@ -210,7 +210,7 @@ Public Class clsSpectralRecord
 	''' </summary>
 	''' <param name="fs">FileStream object</param>
 	''' <returns>Unpacked abundance</returns>
-	Private Function ReadPackedAbundance(ByRef fs As System.IO.FileStream) As Int32
+	Private Function ReadPackedAbundance(ByRef fs As IO.FileStream) As Int32
 
 		Dim byteArray As Byte()
 		Dim byteArrayRev As Byte()

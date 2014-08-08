@@ -8,7 +8,7 @@ Friend Class clsByteConverter
 	''' </summary>
 	''' <param name="fs">FileStream object</param>
 	''' <returns>The value, as an Int16 number</returns>
-	Public Function ReadInt16SwapBytes(ByRef fs As System.IO.FileStream) As Int16
+	Public Function ReadInt16SwapBytes(ByRef fs As IO.FileStream) As Int16
 
 		Dim byteArray As Byte()
 		ReDim byteArray(1)
@@ -35,7 +35,7 @@ Friend Class clsByteConverter
 	''' </summary>
 	''' <param name="fs">FileStream object</param>
 	''' <returns>The value, as an Int32 number</returns>
-	Public Function ReadUInt16SwapBytes(ByRef fs As System.IO.FileStream) As Int32
+	Public Function ReadUInt16SwapBytes(ByRef fs As IO.FileStream) As Int32
 
 		Dim byteArray As Byte()
 		ReDim byteArray(1)
@@ -56,7 +56,7 @@ Friend Class clsByteConverter
 	''' </summary>
 	''' <param name="fs">FileStream object</param>
 	''' <returns>The value, as an Int32 number</returns>
-	Public Function ReadInt32SwapBytes(ByRef fs As System.IO.FileStream) As Int32
+	Public Function ReadInt32SwapBytes(ByRef fs As IO.FileStream) As Int32
 
 		Dim byteArray As Byte()
 		ReDim byteArray(3)
@@ -75,7 +75,7 @@ Friend Class clsByteConverter
 	''' </summary>
 	''' <param name="fs">FileStream object</param>
 	''' <returns>The value, as a single-precision number</returns>
-	Public Function ReadSingleSwapBytes(ByRef fs As System.IO.FileStream) As Single
+	Public Function ReadSingleSwapBytes(ByRef fs As IO.FileStream) As Single
 
 		Dim byteArray As Byte()
 		ReDim byteArray(3)
@@ -96,7 +96,7 @@ Friend Class clsByteConverter
 	''' <param name="iStringLength">String length</param>
 	''' <param name="bAdvanceExtraByte">If true, then advances the read an extra byte after reading the string</param>
 	''' <returns>The string read</returns>
-	Public Function ReadString(ByRef fs As System.IO.FileStream, ByVal iStringLength As Integer, ByVal bAdvanceExtraByte As Boolean) As String
+	Public Function ReadString(ByRef fs As IO.FileStream, ByVal iStringLength As Integer, ByVal bAdvanceExtraByte As Boolean) As String
 		Dim byteArray() As Byte
 
 		ReDim byteArray(iStringLength - 1)
@@ -117,7 +117,7 @@ Friend Class clsByteConverter
 		Next
 
 		If intIndexEnd > -1 Then
-			Dim sText As String = System.Text.Encoding.ASCII.GetString(byteArray, 0, intIndexEnd + 1)
+			Dim sText As String = Text.Encoding.ASCII.GetString(byteArray, 0, intIndexEnd + 1)
 			Return sText
 		Else
 			Return String.Empty

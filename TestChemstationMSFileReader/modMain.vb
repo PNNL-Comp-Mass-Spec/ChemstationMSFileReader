@@ -6,7 +6,7 @@ Option Strict On
 
 Module modMain
 
-	Public Const PROGRAM_DATE As String = "March 27, 2012"
+	Public Const PROGRAM_DATE As String = "August 7, 2014"
 
 	Public Function Main() As Integer
 
@@ -17,21 +17,17 @@ Module modMain
 
 	Private Sub TestChemstationReader()
 
-		Dim ioSourceFile As System.IO.FileInfo
-
-		Dim lstFilesToTest As System.Collections.Generic.List(Of String) = New System.Collections.Generic.List(Of String)
 		Dim strMessage As String
 		Dim intScanNumber As Integer
 
 		Try
 
+			Dim lstFilesToTest = New List(Of String)
 			lstFilesToTest.Add("GCData\3hr_10cGy_10r.D\Data.ms")
 			lstFilesToTest.Add("GCData\FSFA_Diffusion_Pre_nondev_010.D\Data.ms")
 			lstFilesToTest.Add("GCData\Heliumtest30.D\Data.ms")
 
 			For Each sDatafilePath As String In lstFilesToTest
-
-				ioSourceFile = New System.IO.FileInfo(sDatafilePath)
 
 				Using oReader As ChemstationMSFileReader.clsChemstationDataMSFileReader = New ChemstationMSFileReader.clsChemstationDataMSFileReader(sDatafilePath)
 
@@ -43,7 +39,7 @@ Module modMain
 
 					strMessage = "SpectrumDescription" & ControlChars.Tab & "Minutes" & ControlChars.Tab & "BPI" & ControlChars.Tab & "TIC" & ControlChars.Tab & "TotalSignalRawFromIndex"
 
-					Dim lstSpecInfo As System.Collections.Generic.List(Of String) = New System.Collections.Generic.List(Of String)
+					Dim lstSpecInfo As List(Of String) = New List(Of String)
 					lstSpecInfo.Add(strMessage)
 
 					Dim intModValue As Integer
@@ -64,18 +60,15 @@ Module modMain
 							Console.WriteLine(strMessage)
 						End If
 
-						Dim lstMZs As System.Collections.Generic.List(Of Single)
-						Dim lstIntensities As System.Collections.Generic.List(Of Int32)
-
-						lstMZs = oSpectrum.Mzs
-						lstIntensities = oSpectrum.Intensities
+						Dim lstMZs As List(Of Single) = oSpectrum.Mzs
+						Dim lstIntensities As List(Of Int32) = oSpectrum.Intensities
 
 					Next
 
 					Dim strOutFilePath As String
-					strOutFilePath = System.IO.Path.Combine("Results_Debug_" & oReader.Header.DatasetName & ".txt")
+					strOutFilePath = IO.Path.Combine("Results_Debug_" & oReader.Header.DatasetName & ".txt")
 
-					Using swOutFile As System.IO.StreamWriter = New System.IO.StreamWriter(New System.IO.FileStream(strOutFilePath, IO.FileMode.Create, IO.FileAccess.Write, IO.FileShare.Read))
+					Using swOutFile As IO.StreamWriter = New IO.StreamWriter(New IO.FileStream(strOutFilePath, IO.FileMode.Create, IO.FileAccess.Write, IO.FileShare.Read))
 
 
 						swOutFile.WriteLine(oReader.Header.DatasetName)
