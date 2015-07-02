@@ -1,5 +1,8 @@
 Chemstation MS File Reader
 
+Version 1.0.5415; October 29, 2014
+	- Recompiled as AnyCPU
+
 Version 1.0.5332; August 7, 2014
 	- Fixed bit handling bug when extracting packed abundance values
 
